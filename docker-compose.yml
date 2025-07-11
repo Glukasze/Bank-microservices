@@ -1,0 +1,40 @@
+services:
+  accounts:
+    image: "rozano/accounts:latest"
+    container_name: "accounts-ms"
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+            cpus: '0.3'
+            memory: 256m
+    networks:
+        - bank-network
+  loans:
+    image: "rozano/loans:bank"
+    container_name: "loans-ms"
+    ports:
+      - "8090:8090"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 1024m
+    networks:
+      - bank-network
+  cards:
+    image: "rozano/cards:bank"
+    container_name: "cards-ms"
+    ports:
+      - "9000:9000"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256m
+    networks:
+      - bank-network
+networks:
+  bank-network:
+    driver: bridge
