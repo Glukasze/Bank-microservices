@@ -2,11 +2,11 @@ package com.glukasze.accounts.controller;
 
 
 import com.glukasze.accounts.constants.AccountsConstants;
+import com.glukasze.accounts.dto.AccountsContactInfoDto;
 import com.glukasze.accounts.dto.CustomerDto;
 import com.glukasze.accounts.dto.ErrorResponseDto;
 import com.glukasze.accounts.dto.ResponseDto;
 import com.glukasze.accounts.service.IAccountsService;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,8 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +29,24 @@ import static com.glukasze.accounts.constants.AccountsConstants.STATUS_201;
 
 @RestController
 @RequestMapping(path="/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 @Tag(name = "CRUD REST APIs for accounts", description = "This controller provides CRUD operations for customer accounts")
 public class AccountsController {
 
-    @Autowired
     private IAccountsService iAccountsService;
+
+    @Value("${build.version}")
+    private String buildVersion;
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private AccountsContactInfoDto accountsContactInfoDto;
+
+    public AccountsController(IAccountsService iAccountsService) {
+        this.iAccountsService = iAccountsService;
+    }
 
     @Operation(
             summary = "Create account",
@@ -49,6 +61,17 @@ public class AccountsController {
                 .body(new ResponseDto(STATUS_201, MESSAGE_201));
     }
 
+    @Operation(
+            summary = "Fetch account",
+            description = "This endpoint allows you to fetch an existing customer account by providing the mobile number")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Account fetched successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to fetch account",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
     @GetMapping("/fetch")
     public ResponseEntity<CustomerDto> fetchAccountDetails(
             @RequestParam
@@ -116,6 +139,78 @@ public class AccountsController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDto(AccountsConstants.STATUS_500, AccountsConstants.MESSAGE_500));
         }
+    }
+
+    @Operation(
+            summary = "Get build version",
+            description = "This endpoint returns the build version of the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Build version retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve build version",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/build-version")
+    public ResponseEntity<String> getBuildVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(buildVersion);
+    }
+
+    @Operation(
+            summary = "Get Java version",
+            description = "This endpoint returns the Java version used to run the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Java version retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve Java version",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/java-version")
+    public ResponseEntity<String> getJavaVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("JAVA_HOME"));
+    }
+
+    @Operation(
+            summary = "Get Maven version",
+            description = "This endpoint returns the Maven version used to build the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Maven version retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve Maven version",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/maven-version")
+    public ResponseEntity<String> getMavenVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("MAVEN_HOME"));
+    }
+
+    @Operation(
+            summary = "Get contact info",
+            description = "This endpoint returns the contact information for the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Contact info retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve contact info",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(accountsContactInfoDto);
     }
 
 }
