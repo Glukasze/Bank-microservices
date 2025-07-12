@@ -2,6 +2,7 @@ package com.glukasze.accounts.controller;
 
 
 import com.glukasze.accounts.constants.AccountsConstants;
+import com.glukasze.accounts.dto.AccountsContactInfoDto;
 import com.glukasze.accounts.dto.CustomerDto;
 import com.glukasze.accounts.dto.ErrorResponseDto;
 import com.glukasze.accounts.dto.ResponseDto;
@@ -14,7 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +37,12 @@ public class AccountsController {
 
     @Value("${build.version}")
     private String buildVersion;
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private AccountsContactInfoDto accountsContactInfoDto;
 
     public AccountsController(IAccountsService iAccountsService) {
         this.iAccountsService = iAccountsService;
@@ -143,11 +152,65 @@ public class AccountsController {
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
                     ))
     })
-    @GetMapping("/version")
+    @GetMapping("/build-version")
     public ResponseEntity<String> getBuildVersion() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(buildVersion);
+    }
+
+    @Operation(
+            summary = "Get Java version",
+            description = "This endpoint returns the Java version used to run the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Java version retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve Java version",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/java-version")
+    public ResponseEntity<String> getJavaVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("JAVA_HOME"));
+    }
+
+    @Operation(
+            summary = "Get Maven version",
+            description = "This endpoint returns the Maven version used to build the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Maven version retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve Maven version",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/maven-version")
+    public ResponseEntity<String> getMavenVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("MAVEN_HOME"));
+    }
+
+    @Operation(
+            summary = "Get contact info",
+            description = "This endpoint returns the contact information for the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Contact info retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve contact info",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(accountsContactInfoDto);
     }
 
 }

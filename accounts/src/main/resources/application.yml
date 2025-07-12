@@ -17,3 +17,9 @@ jpa:
 
 build:
   version: "1.0"
+
+accounts:
+  message: "Welcome to Accounts Service"
+  contactDetails:
+    name: "Gracjan Lukaszewicz - Developer"
+    email: "gracjan.luk@gmail.com"
