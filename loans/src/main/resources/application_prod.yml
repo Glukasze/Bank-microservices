@@ -6,7 +6,7 @@ spring:
 build:
   version: "1.0"
 
-accounts:
+loans:
   message: "Welcome to Loans Service on Production environment"
   contactDetails:
     name: "Gracjan Lukaszewicz - Developer"

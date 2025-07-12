@@ -2,6 +2,7 @@ package com.glukasze.loans.controller;
 
 import com.glukasze.loans.constants.LoansConstants;
 import com.glukasze.loans.dto.ErrorResponseDto;
+import com.glukasze.loans.dto.LoansContactInfoDto;
 import com.glukasze.loans.dto.LoansDto;
 import com.glukasze.loans.dto.ResponseDto;
 import com.glukasze.loans.service.ILoansService;
@@ -14,6 +15,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +30,23 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 public class LoansController {
 
     private ILoansService iLoansService;
+
+    @Value("${build.version}")
+    private String buildVersion;
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private LoansContactInfoDto loansContactInfoDto;
+
+    public LoansController(ILoansService iLoansService) {
+        this.iLoansService = iLoansService;
+    }
 
     @Operation(
             summary = "Create Loan REST API",
@@ -158,6 +174,78 @@ public class LoansController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(LoansConstants.STATUS_417, LoansConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @Operation(
+            summary = "Get build version",
+            description = "This endpoint returns the build version of the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Build version retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve build version",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/build-version")
+    public ResponseEntity<String> getBuildVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(buildVersion);
+    }
+
+    @Operation(
+            summary = "Get Java version",
+            description = "This endpoint returns the Java version used to run the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Java version retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve Java version",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/java-version")
+    public ResponseEntity<String> getJavaVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("JAVA_HOME"));
+    }
+
+    @Operation(
+            summary = "Get Maven version",
+            description = "This endpoint returns the Maven version used to build the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Maven version retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve Maven version",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/maven-version")
+    public ResponseEntity<String> getMavenVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("MAVEN_HOME"));
+    }
+
+    @Operation(
+            summary = "Get contact info",
+            description = "This endpoint returns the contact information for the application")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Contact info retrieved successfully"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Failed to retrieve contact info",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/contact-info")
+    public ResponseEntity<LoansContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(loansContactInfoDto);
     }
 
 }

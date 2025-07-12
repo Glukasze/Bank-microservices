@@ -24,7 +24,7 @@ spring:
 build:
   version: "3.0"
 
-accounts:
+loans:
   message: "Welcome to Loans Service"
   contactDetails:
     name: "Gracjan Lukaszewicz - Developer"

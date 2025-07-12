@@ -24,7 +24,7 @@ spring:
 build:
   version: "3.0"
 
-accounts:
+cards:
   message: "Welcome to Cards Service"
   contactDetails:
     name: "Gracjan Lukaszewicz - Developer"

@@ -6,7 +6,7 @@ spring:
 build:
   version: "2.0"
 
-accounts:
+loans:
   message: "Welcome to Loans Service on QA environment"
   contactDetails:
     name: "Gracjan Lukaszewicz - Developer"
