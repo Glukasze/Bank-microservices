@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: "1.0"
+
+accounts:
+  message: "Welcome to Loans Service on Production environment"
+  contactDetails:
+    name: "Gracjan Lukaszewicz - Developer"
+    email: "gracjan.luk@gmail.com"
