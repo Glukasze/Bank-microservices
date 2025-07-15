@@ -1,0 +1,6 @@
+spring:
+  config:
+    import: "optional:configserver:"
+
+build:
+  version: 1.0.0
