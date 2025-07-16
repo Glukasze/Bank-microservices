@@ -1,0 +1,8 @@
+build:
+  version: "3.0"
+
+cards:
+  message: "Welcome to Cards Service"
+  contactDetails:
+    name: "Gracjan Lukaszewicz - Developer"
+    email: "gracjan.luk@gmail.com"

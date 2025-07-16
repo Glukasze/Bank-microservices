@@ -1,0 +1,8 @@
+build:
+  version: "2.0"
+
+loans:
+  message: "Welcome to Loans Service on QA environment"
+  contactDetails:
+    name: "Gracjan Lukaszewicz - Developer"
+    email: "gracjan.luk@gmail.com"
